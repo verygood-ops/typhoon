@@ -1,3 +1,9 @@
+resource "aws_subnet" "public" {
+  count      = 0
+  vpc_id     = ""
+  cidr_block = ""
+}
+
 resource "aws_subnet" "private" {
   count = "${length(data.aws_availability_zones.all.names)}"
 
@@ -6,10 +12,16 @@ resource "aws_subnet" "private" {
 
   cidr_block                      = "${cidrsubnet(var.host_cidr, 4, count.index)}"
   ipv6_cidr_block                 = "${cidrsubnet(aws_vpc.network.ipv6_cidr_block, 8, count.index)}"
-  map_public_ip_on_launch         = true
-  assign_ipv6_address_on_creation = true
+  map_public_ip_on_launch         = false
+  assign_ipv6_address_on_creation = false
 
   tags = "${map("Name", "${var.cluster_name}-private-${count.index}")}"
+}
+
+resource "aws_route_table_association" "public" {
+  count          = 0
+  route_table_id = ""
+  subnet_id      = ""
 }
 
 resource "aws_route_table_association" "private" {
